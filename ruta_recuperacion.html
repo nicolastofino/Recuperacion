@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu Ruta de Recuperación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF8F0;
+    --panel:#FFFFFF;
+    --ink:#2B2B2B;
+    --ink-soft:#6B6B6B;
+    --pink:#FF8FA3;
+    --pink-soft:#FFE1E6;
+    --blue:#6FCBDD;
+    --blue-soft:#DFF6FA;
+    --yellow:#FFD93D;
+    --yellow-soft:#FFF6D6;
+    --green:#8FD9A8;
+    --green-soft:#E5F9EC;
+    --radius:18px;
+    --border:3px solid var(--ink);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    font-family:'Baloo 2', sans-serif;
+    color:var(--ink);
+    padding:16px;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+  h1,h2,h3{font-family:'Bangers', 'Baloo 2', sans-serif; letter-spacing:1px; margin:0;}
+  .halftone{
+    background-image: radial-gradient(var(--ink) 1px, transparent 1.6px);
+    background-size: 10px 10px;
+    opacity:0.08;
+    position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  }
+  .panel{
+    position:relative;
+    background:var(--panel);
+    border:var(--border);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:16px;
+    box-shadow:5px 5px 0 var(--ink);
+  }
+  .hero{
+    background:linear-gradient(135deg, var(--pink-soft), var(--blue-soft));
+    text-align:center;
+    padding:26px 18px;
+  }
+  .hero h1{font-size:2.3rem; color:var(--ink); text-shadow:2px 2px 0 var(--yellow);}
+  .hero p{margin:8px 0 0; font-weight:600; color:var(--ink-soft);}
+  .bubble{
+    position:relative;
+    background:var(--panel);
+    border:var(--border);
+    border-radius:20px;
+    padding:14px 16px;
+    margin:14px 0;
+    font-weight:600;
+  }
+  .bubble.sensei{background:var(--yellow-soft);}
+  .bubble.warn{background:var(--pink-soft);}
+  .bubble::before{
+    content:"";
+    position:absolute; left:26px; bottom:-14px;
+    border-width:14px 10px 0 0;
+    border-style:solid;
+    border-color:var(--ink) transparent transparent transparent;
+  }
+  .bubble::after{
+    content:"";
+    position:absolute; left:29px; bottom:-9px;
+    border-width:10px 7px 0 0;
+    border-style:solid;
+    border-color:inherit transparent transparent transparent;
+  }
+  .bubble.sensei::after{border-color:var(--yellow-soft) transparent transparent transparent;}
+  .bubble.warn::after{border-color:var(--pink-soft) transparent transparent transparent;}
+  .tag{display:inline-block; font-family:'Bangers'; font-size:0.85rem; letter-spacing:1px; background:var(--ink); color:var(--cream); padding:2px 10px; border-radius:20px; margin-bottom:6px;}
+  .phases{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+  .phase-card{border:var(--border); border-radius:14px; padding:10px; text-align:center; background:var(--panel); cursor:default;}
+  .phase-card.active{background:var(--yellow-soft); box-shadow:3px 3px 0 var(--ink);}
+  .phase-card h3{font-size:1.1rem;}
+  .phase-card .dots span{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--ink-soft); margin:0 2px;}
+  .phase-card .dots span.on{background:var(--pink);}
+  .week-row{display:flex; align-items:center; gap:10px; justify-content:center; margin-top:10px;}
+  .week-row button{
+    font-family:'Bangers'; font-size:1.3rem; width:38px; height:38px; border:var(--border); border-radius:10px; background:var(--blue-soft); cursor:pointer;
+  }
+  .week-row .weeknum{font-family:'Bangers'; font-size:1.6rem; min-width:120px; text-align:center;}
+  .progressbar{height:16px; border:2px solid var(--ink); border-radius:10px; background:var(--panel); overflow:hidden; margin-top:10px;}
+  .progressbar-fill{height:100%; background:repeating-linear-gradient(45deg, var(--pink), var(--pink) 8px, var(--yellow) 8px, var(--yellow) 16px);}
+  .section-title{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+  .section-title .icon{font-size:1.4rem;}
+  .block-desc{color:var(--ink-soft); font-weight:600; margin:4px 0 12px; font-size:0.95rem;}
+  .timer-box{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .timer-display{font-family:'Bangers'; font-size:2.4rem; background:var(--ink); color:var(--cream); padding:6px 18px; border-radius:12px;}
+  .btn{
+    font-family:'Baloo 2'; font-weight:700; border:var(--border); border-radius:12px; padding:8px 16px; cursor:pointer; background:var(--panel);
+    box-shadow:3px 3px 0 var(--ink); transition:transform .05s;
+  }
+  .btn:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink);}
+  .btn.primary{background:var(--pink);}
+  .btn.blue{background:var(--blue);}
+  .btn.yellow{background:var(--yellow);}
+  .btn.green{background:var(--green);}
+  .btn:disabled{opacity:0.4; cursor:default;}
+  .exercise{border:2px dashed var(--ink); border-radius:14px; padding:12px; margin-bottom:12px; background:var(--cream);}
+  .exercise.done{background:var(--green-soft); border-style:solid;}
+  .exercise-head{display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;}
+  .exercise-head h3{font-size:1.1rem;}
+  .goal{font-family:'Bangers'; color:var(--ink-soft); font-size:1rem;}
+  .note{font-size:0.85rem; color:var(--ink-soft); margin-top:4px; font-weight:600;}
+  .counter-row{display:flex; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap;}
+  .rep-display{font-family:'Bangers'; font-size:1.6rem; background:var(--panel); border:2px solid var(--ink); border-radius:10px; padding:4px 14px; min-width:80px; text-align:center;}
+  .burst{
+    display:inline-block; font-family:'Bangers'; color:var(--pink); font-size:1rem; opacity:0; transition:opacity .2s, transform .2s; transform:scale(0.6);
+  }
+  .burst.show{opacity:1; transform:scale(1);}
+  ul.simple{padding-left:20px; margin:0;}
+  ul.simple li{margin-bottom:6px; font-weight:600;}
+  .checklist label{display:flex; gap:8px; align-items:center; margin-bottom:8px; font-weight:600; cursor:pointer;}
+  .checklist input{width:18px; height:18px;}
+  .finish{text-align:center; margin-top:16px;}
+  .stamp{
+    display:inline-block; font-family:'Bangers'; color:var(--green); border:4px solid var(--green); border-radius:12px; padding:8px 18px; font-size:1.4rem; transform:rotate(-6deg); margin-top:10px;
+  }
+  .streak{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+  .streak .num{font-family:'Bangers'; font-size:2rem; color:var(--pink);}
+  footer{text-align:center; color:var(--ink-soft); font-size:0.85rem; margin-top:20px; font-weight:600;}
+  @media (max-width:480px){
+    .phases{grid-template-columns:1fr;}
+    .hero h1{font-size:1.7rem;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="panel hero">
+    <div class="halftone"></div>
+    <span class="tag">PROGRAMA · 24 SEMANAS</span>
+    <h1>TU RUTA DE RECUPERACIÓN</h1>
+    <p>Codo derecho · Hombro izquierdo (Bankart) · 3 sesiones/semana · 45 min</p>
+  </div>
+
+  <div class="bubble warn">
+    ⚠️ Marcaste que no estás segura de tener el alta médica completa para cargar los brazos. Este plan evita a propósito posiciones de riesgo para tu hombro (brazo estirado hacia atrás y hacia afuera al mismo tiempo) y para tu codo (bloquear la articulación con peso). Aun así, antes de empezar, confírmalo con tu médico o fisioterapeuta — ellos conocen tu caso real. Si sientes dolor agudo, chasquidos, hinchazón u hormigueo en brazo/mano: para de inmediato y consulta.
+  </div>
+
+  <div class="panel">
+    <div class="section-title"><span class="icon">📖</span><h2>Las 3 fases</h2></div>
+    <div class="phases" id="phaseCards"></div>
+    <div class="week-row">
+      <button id="weekMinus">−</button>
+      <div class="weeknum" id="weekLabel">Semana 1</div>
+      <button id="weekPlus">+</button>
+    </div>
+    <div class="progressbar"><div class="progressbar-fill" id="progFill" style="width:4%"></div></div>
+    <p class="block-desc" id="phaseDesc" style="text-align:center;margin-top:8px;"></p>
+  </div>
+
+  <div class="panel">
+    <div class="section-title"><span class="icon">🔥</span><h2>Calentamiento</h2></div>
+    <p class="block-desc">5 min · moda suave, sin forzar el hombro. Marca cada uno al terminarlo.</p>
+    <div class="checklist" id="warmupList"></div>
+  </div>
+
+  <div class="panel">
+    <div class="section-title"><span class="icon">🚴</span><h2>Bicicleta estática</h2></div>
+    <p class="block-desc" id="cardioDesc"></p>
+    <div class="timer-box">
+      <div class="timer-display" id="cardioTimer">00:00</div>
+      <button class="btn blue" id="cardioStart">Iniciar</button>
+      <button class="btn" id="cardioReset">Reiniciar</button>
+    </div>
+    <p class="note">Manos relajadas sobre el manubrio, codos levemente flexionados (nunca bloqueados en extensión). Hombros abajo y relajados, sin cargar peso hacia adelante.</p>
+  </div>
+
+  <div class="panel">
+    <div class="section-title"><span class="icon">💪</span><h2>Circuito de core</h2></div>
+    <p class="block-desc">Mat de yoga + máquina de abdominales. Toca "+1" en cada repetición.</p>
+    <div id="coreList"></div>
+  </div>
+
+  <div class="panel">
+    <div class="section-title"><span class="icon">🌙</span><h2>Enfriamiento y estiramiento</h2></div>
+    <p class="block-desc">5 min · respiración y estiramiento suave, sin llevar el brazo izquierdo a posiciones extremas.</p>
+    <div class="checklist" id="cooldownList"></div>
+  </div>
+
+  <div class="panel">
+    <div class="section-title"><span class="icon">📊</span><h2>Tu progreso</h2></div>
+    <div class="streak">
+      <div>Sesiones completadas<br><span class="num" id="sessionCount">0</span></div>
+      <button class="btn primary" id="finishBtn">✅ Completar sesión de hoy</button>
+    </div>
+    <div class="finish" id="stampWrap" style="display:none;"><div class="stamp">¡SESIÓN COMPLETADA!</div></div>
+  </div>
+
+  <div class="bubble sensei">
+    🥋 Sensei dice: el ejercicio ayuda, pero bajar de peso depende sobre todo de tu alimentación diaria. Prioriza comida real, porciones acordes a tu apetito real y buena hidratación — no hace falta contar cada caloría para avanzar de forma sostenible.
+  </div>
+
+  <footer>Este plan es una guía general y no reemplaza la evaluación de tu médico o fisioterapeuta. Ajusta o detén cualquier ejercicio si sientes dolor.</footer>
+</div>
+
+<script>
+const PHASES = [
+  {
+    id:1, range:"Semanas 1–8", name:"Fase 1 · Base", weeks:[1,8],
+    cardio:{min:15, label:"Ritmo continuo suave", desc:"15 min continuos, resistencia baja, ritmo constante y cómodo (deberías poder hablar sin ahogarte)."},
+    core:[
+      {name:"Puente de glúteo", type:"reps", sets:3, reps:12, note:"Pies apoyados, sube la cadera sin arquear la espalda."},
+      {name:"Marcha sentada", type:"reps", sets:3, reps:15, note:"Sentada al borde de la silla, eleva rodillas alternando. Brazos relajados a los lados."},
+      {name:"Plancha de rodillas", type:"time", sets:3, seconds:20, note:"Antebrazos apoyados, codo del brazo operado sin girar hacia afuera."},
+      {name:"Abdominal en máquina (rango corto)", type:"reps", sets:3, reps:12, note:"Agarra los apoyos sin apretar fuerte; movimiento corto y controlado."}
+    ]
+  },
+  {
+    id:2, range:"Semanas 9–16", name:"Fase 2 · Progresión", weeks:[9,16],
+    cardio:{min:20, label:"Intervalos moderados", desc:"20 min: 2 min ritmo moderado + 1 min suave, repite el ciclo hasta completar el tiempo."},
+    core:[
+      {name:"Puente de glúteo con marcha", type:"reps", sets:3, reps:15, note:"Añade una pequeña marcha en la cima del puente."},
+      {name:"Dead bug modificado", type:"reps", sets:3, reps:10, note:"Manos en la cadera (sin levantar brazos sobre la cabeza), extiende una pierna a la vez."},
+      {name:"Plancha de rodillas", type:"time", sets:3, seconds:30, note:"Mantén hombros alineados, sin hundir el lado izquierdo."},
+      {name:"Abdominal en máquina (resistencia media)", type:"reps", sets:4, reps:15, note:"Sube un poco la resistencia si el rango corto ya se siente fácil."},
+      {name:"Elevación de piernas acostada", type:"reps", sets:3, reps:12, note:"Espalda baja pegada al mat, baja solo hasta donde controles."}
+    ]
+  },
+  {
+    id:3, range:"Semanas 17–24", name:"Fase 3 · Intensidad", weeks:[17,24],
+    cardio:{min:20, label:"Intervalos fuertes (HIIT suave)", desc:"20 min: 1 min fuerte + 1 min suave, alterna durante todo el bloque."},
+    core:[
+      {name:"Plancha completa", type:"time", sets:3, seconds:35, note:"Pies apoyados, cuerpo en línea recta, sin bloquear los codos."},
+      {name:"Bicicleta abdominal controlada", type:"reps", sets:3, reps:20, note:"Movimiento lento, sin tirar del cuello con las manos."},
+      {name:"Abdominal en máquina (resistencia alta)", type:"reps", sets:4, reps:20, note:"Sube resistencia solo si mantienes buena técnica y sin dolor."},
+      {name:"Elevación de piernas + toque de talones", type:"reps", sets:3, reps:15, note:"Controla la bajada, no dejes caer las piernas."},
+      {name:"Puente a una pierna", type:"reps", sets:3, reps:10, note:"Mayor exigencia de glúteo y estabilidad de cadera."}
+    ]
+  }
+];
+const WARMUP = ["Respiración diafragmática (10 respiraciones)","Círculos de tobillo, sentada","Movilidad de cuello, lenta y suave","Pedaleo en el aire muy suave, sin resistencia, 1 min"];
+const COOLDOWN = ["Respiración profunda (10 respiraciones)","Estiramiento suave de isquiotibiales, acostada","Estiramiento de cuello y trapecios","Relajación de espalda baja, rodillas al pecho (sin usar los brazos para forzar)"];
+
+let currentWeek = 1;
+let sessionCount = 0;
+let coreState = [];
+let cardioSecondsLeft = 0, cardioInterval = null, cardioRunning=false;
+
+function phaseForWeek(w){ return PHASES.find(p=>w>=p.weeks[0] && w<=p.weeks[1]) || PHASES[2]; }
+
+function renderPhaseCards(){
+  const el = document.getElementById('phaseCards');
+  el.innerHTML = PHASES.map(p=>{
+    const active = phaseForWeek(currentWeek).id===p.id;
+    return `<div class="phase-card ${active?'active':''}">
+      <h3>${p.name}</h3>
+      <div>${p.range}</div>
+      <div class="dots">${[1,2,3].map(n=>`<span class="${n<=p.id?'on':''}"></span>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderWeek(){
+  document.getElementById('weekLabel').textContent = 'Semana ' + currentWeek;
+  document.getElementById('progFill').style.width = Math.round(currentWeek/24*100) + '%';
+  const phase = phaseForWeek(currentWeek);
+  document.getElementById('phaseDesc').textContent = phase.name + ' — ' + phase.range;
+  renderPhaseCards();
+  renderCardio(phase);
+  renderCore(phase);
+  renderChecklist('warmupList', WARMUP, 'warm');
+  renderChecklist('cooldownList', COOLDOWN, 'cool');
+}
+
+function renderChecklist(elId, items, prefix){
+  const el = document.getElementById(elId);
+  el.innerHTML = items.map((t,i)=>`<label><input type="checkbox" id="${prefix}${i}">${t}</label>`).join('');
+}
+
+function renderCardio(phase){
+  document.getElementById('cardioDesc').textContent = phase.cardio.label + ' — ' + phase.cardio.desc;
+  cardioSecondsLeft = phase.cardio.min*60;
+  updateCardioDisplay();
+  clearInterval(cardioInterval); cardioRunning=false;
+  document.getElementById('cardioStart').textContent = 'Iniciar';
+}
+
+function updateCardioDisplay(){
+  const m = Math.floor(cardioSecondsLeft/60).toString().padStart(2,'0');
+  const s = (cardioSecondsLeft%60).toString().padStart(2,'0');
+  document.getElementById('cardioTimer').textContent = m+':'+s;
+}
+
+document.getElementById('cardioStart').onclick = ()=>{
+  if(cardioRunning){
+    clearInterval(cardioInterval); cardioRunning=false;
+    document.getElementById('cardioStart').textContent='Reanudar';
+    return;
+  }
+  cardioRunning=true;
+  document.getElementById('cardioStart').textContent='Pausar';
+  cardioInterval = setInterval(()=>{
+    if(cardioSecondsLeft<=0){ clearInterval(cardioInterval); cardioRunning=false; document.getElementById('cardioStart').textContent='¡Listo!'; return; }
+    cardioSecondsLeft--; updateCardioDisplay();
+  },1000);
+};
+document.getElementById('cardioReset').onclick = ()=>{ renderCardio(phaseForWeek(currentWeek)); };
+
+function renderCore(phase){
+  coreState = phase.core.map(ex=>({ ...ex, curSet:1, curReps:0, timeLeft:ex.type==='time'?ex.seconds:0, timerRunning:false, timerHandle:null, done:false }));
+  const el = document.getElementById('coreList');
+  el.innerHTML = coreState.map((ex,i)=>{
+    const goal = ex.type==='reps' ? `${ex.sets} series x ${ex.reps} rep` : `${ex.sets} series x ${ex.seconds} seg`;
+    return `<div class="exercise" id="ex${i}">
+      <div class="exercise-head"><h3>${ex.name}</h3><div class="goal">${goal}</div></div>
+      <div class="note">${ex.note}</div>
+      <div class="counter-row" id="exRow${i}"></div>
+    </div>`;
+  }).join('');
+  coreState.forEach((ex,i)=>renderExerciseRow(i));
+}
+
+function renderExerciseRow(i){
+  const ex = coreState[i];
+  const row = document.getElementById('exRow'+i);
+  const exCard = document.getElementById('ex'+i);
+  if(ex.done){
+    exCard.classList.add('done');
+    row.innerHTML = `<span class="burst show">¡COMPLETO! 💥</span>`;
+    return;
+  }
+  if(ex.type==='reps'){
+    row.innerHTML = `
+      <span>Serie ${ex.curSet}/${ex.sets}</span>
+      <div class="rep-display" id="repDisp${i}">${ex.curReps}/${ex.reps}</div>
+      <button class="btn primary" id="repBtn${i}">+1 rep</button>
+      <span class="burst" id="burst${i}">💥</span>
+    `;
+    document.getElementById('repBtn'+i).onclick = ()=>{
+      ex.curReps++;
+      const disp = document.getElementById('repDisp'+i);
+      disp.textContent = ex.curReps+'/'+ex.reps;
+      const b = document.getElementById('burst'+i); b.classList.add('show'); setTimeout(()=>b.classList.remove('show'),200);
+      if(ex.curReps>=ex.reps){
+        if(ex.curSet>=ex.sets){ ex.done=true; renderExerciseRow(i); }
+        else { ex.curSet++; ex.curReps=0; renderExerciseRow(i); }
+      }
+    };
+  } else {
+    row.innerHTML = `
+      <span>Serie ${ex.curSet}/${ex.sets}</span>
+      <div class="timer-display" id="timeDisp${i}" style="font-size:1.6rem;">${ex.timeLeft}s</div>
+      <button class="btn blue" id="timeBtn${i}">${ex.timerRunning?'Pausar':'Iniciar serie'}</button>
+    `;
+    document.getElementById('timeBtn'+i).onclick = ()=>{
+      if(ex.timerRunning){
+        clearInterval(ex.timerHandle); ex.timerRunning=false; renderExerciseRow(i); return;
+      }
+      ex.timerRunning=true; renderExerciseRow(i);
+      ex.timerHandle = setInterval(()=>{
+        ex.timeLeft--;
+        const d = document.getElementById('timeDisp'+i);
+        if(d) d.textContent = Math.max(ex.timeLeft,0)+'s';
+        if(ex.timeLeft<=0){
+          clearInterval(ex.timerHandle); ex.timerRunning=false;
+          if(ex.curSet>=ex.sets){ ex.done=true; renderExerciseRow(i); }
+          else { ex.curSet++; ex.timeLeft=ex.seconds; renderExerciseRow(i); }
+        }
+      },1000);
+    };
+  }
+}
+
+document.getElementById('weekMinus').onclick = ()=>{ if(currentWeek>1){currentWeek--; renderWeek(); saveState();} };
+document.getElementById('weekPlus').onclick = ()=>{ if(currentWeek<24){currentWeek++; renderWeek(); saveState();} };
+
+document.getElementById('finishBtn').onclick = ()=>{
+  sessionCount++;
+  document.getElementById('sessionCount').textContent = sessionCount;
+  document.getElementById('stampWrap').style.display='block';
+  saveState();
+};
+
+async function saveState(){
+  try{
+    await window.storage.set('ruta_progreso', JSON.stringify({currentWeek, sessionCount}));
+  }catch(e){ console.error('No se pudo guardar el progreso', e); }
+}
+async function loadState(){
+  try{
+    const res = await window.storage.get('ruta_progreso');
+    if(res && res.value){
+      const data = JSON.parse(res.value);
+      if(data.currentWeek) currentWeek = data.currentWeek;
+      if(data.sessionCount) sessionCount = data.sessionCount;
+      document.getElementById('sessionCount').textContent = sessionCount;
+    }
+  }catch(e){ /* no hay progreso guardado todavía */ }
+  renderWeek();
+}
+loadState();
+</script>
+</body>
+</html>
